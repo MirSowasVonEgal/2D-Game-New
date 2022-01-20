@@ -31,7 +31,7 @@ public class GameScreen extends Application {
         borderPane.setCenter(canvas);
 
         World world = new World();
-        world.createWorld();
+        world.loadWorld("Map01");
 
         Player mainPlayer = new Player(Skin.DEFAULT,
                 new Location((Settings.width/2.0)-0.5, (Settings.height/2.0)-0.5));
@@ -63,9 +63,15 @@ public class GameScreen extends Application {
                     block.render(context);
                 });
 
+                playerManager.colliderX.render(context);
+                playerManager.colliderY.render(context);
+
                 playerManager.getWorld().getPlayers().forEach(player -> {
                     player.render(context);
                 });
+
+                playerManager.colliderX.getLocation().set(playerManager.getPlayer().getLocation().getX(), playerManager.getPlayer().getLocation().getY());
+                playerManager.colliderY.getLocation().set(playerManager.getPlayer().getLocation().getX(), playerManager.getPlayer().getLocation().getY());
             }
         }.start();
     }

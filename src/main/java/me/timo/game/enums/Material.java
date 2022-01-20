@@ -1,5 +1,8 @@
 package me.timo.game.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum Material {
 
     WALL(1, "textures/wall.png", true);
@@ -36,6 +39,13 @@ public enum Material {
         this.id = id;
         this.texture = texture;
         this.isSolid = isSolid;
+    }
+
+    public static Material get(int id) {
+        Optional<Material> materials = Arrays.stream(Material.values())
+                .filter(env -> env.id == id)
+                .findFirst();
+        return materials.get();
     }
 
 }

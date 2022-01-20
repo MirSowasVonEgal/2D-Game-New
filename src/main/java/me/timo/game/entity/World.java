@@ -1,14 +1,24 @@
 package me.timo.game.entity;
 
 import me.timo.game.enums.Material;
-import me.timo.game.enums.Skin;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class World {
 
     public ArrayList<Block> blocks = new ArrayList<>();
     public ArrayList<Player> players = new ArrayList<>();
+    public ArrayList<Sprite> sprites = new ArrayList<>();
+
+    public ArrayList<Sprite> getSprites() {
+        return sprites;
+    }
+
+    public void setSprites(ArrayList<Sprite> sprites) {
+        this.sprites = sprites;
+    }
 
     public ArrayList<Block> getBlocks() {
         return blocks;
@@ -31,8 +41,40 @@ public class World {
     }
 
     public void createWorld() {
-        blocks.add(new Block(Material.WALL, new Location(0, 0)));
-        blocks.add(new Block(Material.WALL, new Location(1, 0)));
+        for (int i = 0; i < 16; i++) {
+            blocks.add(new Block(Material.WALL, new Location(i, 0)));
+            blocks.add(new Block(Material.WALL, new Location(i, 11)));
+        }
+    }
+
+    public void loadWorld(String name) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Objects.requireNonNull(getClass().
+                getClassLoader().getResource("maps/"+name)).getFile()))) {
+            String line;
+            int y = 0;
+            Location playerLocation = new Location();
+            while ((line = br.readLine()) != null) {
+                String newLine = line.replace(" ", "");
+                for (int i = 0; i < newLine.length(); i++) {
+                    char ObjectId = newLine.charAt(i);
+                    if(ObjectId == 'P') {
+                        playerLocation.set(i, y);
+                    } else {
+                        int blockId = Character.getNumericValue(ObjectId);
+                        System.out.println("X: " + i + " Y:" + y + " BlockID: " + blockId);
+                        if (blockId != 0)
+                            blocks.add(new Block(Material.get(blockId), new Location(i, y)));
+                    }
+                }
+                y++;
+            }
+            getBlocks().forEach(block -> {
+                block.getLocation().add((-playerLocation.getX() + 7.5 )*64, (-playerLocation.getY() + 5.5)*64);
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
