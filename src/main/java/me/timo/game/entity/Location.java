@@ -1,6 +1,6 @@
 package me.timo.game.entity;
 
-public class Location {
+public class Location implements Cloneable {
 
     public double getX() {
         return x;
@@ -63,5 +63,15 @@ public class Location {
 
     public Location get() {
         return this;
+    }
+
+    @Override
+    public Location clone() {
+        try {
+            return (Location) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

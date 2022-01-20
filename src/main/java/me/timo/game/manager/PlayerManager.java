@@ -64,11 +64,11 @@ public class PlayerManager {
         world.getPlayers().add(player);
 
         colliderY = new Sprite();
-        colliderY.setSize(62, 3);
+        colliderY.setSize(player.getSprite().getHeight()-2, 3);
         colliderY.getLocation().set(player.getLocation().getX(), player.getLocation().getY());
 
         colliderX = new Sprite();
-        colliderX.setSize(3, 62);
+        colliderX.setSize(3, player.getSprite().getHeight()-2);
         colliderX.getLocation().set(player.getLocation().getX(), player.getLocation().getY());
     }
 
@@ -89,13 +89,13 @@ public class PlayerManager {
         if(getInputs().contains("S")) {
             velocity.setY(-Settings.playerSpeed);
             colliderY.setName("BOTTOM");
-            colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()+64);
+            colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()+player.getSprite().getHeight());
             getWorld().getSprites().add(colliderY);
         }
         if(getInputs().contains("D")) {
             velocity.setX(-Settings.playerSpeed);
             colliderX.setName("RIGHT");
-            colliderX.getLocation().set(player.getLocation().getX()+64, player.getLocation().getY()+1);
+            colliderX.getLocation().set(player.getLocation().getX()+player.getSprite().getWidth(), player.getLocation().getY()+1);
             getWorld().getSprites().add(colliderX);
         }
 
@@ -126,12 +126,12 @@ public class PlayerManager {
                     double width = block.getLocation().getX();
                     if (velocity.getX() > 0 && colliderX.getName().equals("LEFT")) {
                         velocity.setX(0);
-                        width = ((Settings.height * 32.0) -
-                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth() + 128);
+                        width = ((Settings.width * 32.0) -
+                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth());
                     } else if (velocity.getX() < 0 && colliderX.getName().equals("RIGHT")) {
                         velocity.setX(0);
-                        width = ((Settings.height * 32.0) -
-                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth() + 256);
+                        width = ((Settings.width * 32.0) -
+                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth() + 128);
                     }
                     double rate = -(block.getLocation().getX() - width);
                     block.getLocation().setX(width);

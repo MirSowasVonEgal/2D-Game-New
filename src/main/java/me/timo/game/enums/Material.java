@@ -5,7 +5,9 @@ import java.util.Optional;
 
 public enum Material {
 
-    WALL(1, "textures/wall.png", true);
+    ROCK(1, "textures/wall.png", true),
+    TILE(2, "textures/tile.png", true),
+    COBBLESTONE(3, "textures/cobblestone.png", true);
 
     public int id;
     public String texture;

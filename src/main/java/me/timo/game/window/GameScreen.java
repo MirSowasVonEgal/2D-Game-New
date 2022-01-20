@@ -5,24 +5,24 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import me.timo.game.entity.*;
-import me.timo.game.enums.Material;
 import me.timo.game.enums.Skin;
 import me.timo.game.manager.PlayerManager;
 import me.timo.game.utils.Settings;
 
-import java.util.ArrayList;
-
 public class GameScreen extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         BorderPane borderPane = new BorderPane();
         Scene mainScene = new Scene(borderPane);
         primaryStage.setScene(mainScene);
+        primaryStage.setTitle(Settings.title);
 
         Canvas canvas = new Canvas(Settings.width*64, Settings.height*64);
         GraphicsContext context = canvas.getGraphicsContext2D();
@@ -47,6 +47,7 @@ public class GameScreen extends Application {
         });
 
         startGameLoop(playerManager, context);
+        onResize(primaryStage, context, world);
         primaryStage.show();
     }
 
@@ -70,10 +71,51 @@ public class GameScreen extends Application {
                     player.render(context);
                 });
 
-                playerManager.colliderX.getLocation().set(playerManager.getPlayer().getLocation().getX(), playerManager.getPlayer().getLocation().getY());
-                playerManager.colliderY.getLocation().set(playerManager.getPlayer().getLocation().getX(), playerManager.getPlayer().getLocation().getY());
+                playerManager.colliderX.setLocation(playerManager.getPlayer().getLocation().clone());
+                playerManager.colliderY.setLocation(playerManager.getPlayer().getLocation().clone());
             }
         }.start();
     }
+
+    public void onResize(Stage stage, GraphicsContext context, World world) {
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double width = newValue.doubleValue() - 16;
+
+            world.getPlayers().forEach(player -> {
+                Location location = player.getLocation().clone();
+                Settings.width = width / 64;
+                context.getCanvas().setWidth(width);
+                context.setFill(Color.SKYBLUE);
+                context.fillRect(0,0, Settings.width*64, Settings.height*64);
+                player.getLocation().setX(((Settings.width/2.0)-0.5)*64);
+                world.getBlocks().forEach(block -> {
+                    block.getLocation().add(new Vector( player.getLocation().getX() - location.getX(), 0));
+                });
+            });
+        });
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double height = newValue.doubleValue() - 16;
+
+            world.getPlayers().forEach(player -> {
+                Location location = player.getLocation().clone();
+                Settings.height = height / 64;
+                context.getCanvas().setHeight(height);
+                context.setFill(Color.SKYBLUE);
+                context.fillRect(0,0, Settings.width*64, Settings.height*64);
+                player.getLocation().setY(((Settings.height/2.0)-0.5)*64);
+                world.getBlocks().forEach(block -> {
+                    block.getLocation().add(new Vector( 0, player.getLocation().getY() - location.getY()));
+                });
+            });
+        });
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (KeyCode.F11.equals(event.getCode())) {
+                stage.setFullScreen(!stage.isFullScreen());
+                stage.setMaximized(true);
+                stage.setAlwaysOnTop(true);
+            }
+        });
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package me.timo.game.entity;
 
 import me.timo.game.enums.Material;
+import me.timo.game.utils.Settings;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class World {
 
     public void createWorld() {
         for (int i = 0; i < 16; i++) {
-            blocks.add(new Block(Material.WALL, new Location(i, 0)));
-            blocks.add(new Block(Material.WALL, new Location(i, 11)));
+            blocks.add(new Block(Material.ROCK, new Location(i, 0)));
+            blocks.add(new Block(Material.ROCK, new Location(i, 11)));
         }
     }
 
@@ -61,7 +62,6 @@ public class World {
                         playerLocation.set(i, y);
                     } else {
                         int blockId = Character.getNumericValue(ObjectId);
-                        System.out.println("X: " + i + " Y:" + y + " BlockID: " + blockId);
                         if (blockId != 0)
                             blocks.add(new Block(Material.get(blockId), new Location(i, y)));
                     }
@@ -69,7 +69,8 @@ public class World {
                 y++;
             }
             getBlocks().forEach(block -> {
-                block.getLocation().add((-playerLocation.getX() + 7.5 )*64, (-playerLocation.getY() + 5.5)*64);
+                block.getLocation().add((-playerLocation.getX() + (Settings.width / 2.0) - 0.5 ) *64,
+                        (-playerLocation.getY() + (Settings.height / 2.0) - 0.5 )*64);
             });
         } catch (IOException e) {
             e.printStackTrace();
