@@ -2,26 +2,26 @@ package me.timo.game.entity;
 
 public class Location {
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public int y;
-    public int x;
+    public double y;
+    public double x;
 
-    public Location(int x, int y) {
+    public Location(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -31,25 +31,31 @@ public class Location {
         this.y = 0;
     }
 
-    public Location set(int x, int y) {
+    public Location set(double x, double y) {
         this.x = x;
         this.y = y;
         return this;
     }
 
-    public Location add(int x, int y) {
+    public Location add(double x, double y) {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    public Location remove(int x, int y) {
+    public Location add(Vector vector) {
+        this.x += vector.getX();
+        this.y += vector.getY();
+        return this;
+    }
+
+    public Location remove(double x, double y) {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    public Location multiply(int m) {
+    public Location multiply(double m) {
         this.x *= m;
         this.y *= m;
         return this;

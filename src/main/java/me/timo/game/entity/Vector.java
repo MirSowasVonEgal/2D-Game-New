@@ -2,26 +2,26 @@ package me.timo.game.entity;
 
 public class Vector {
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public int y;
-    public int x;
+    public double y;
+    public double x;
 
-    public Vector(int x, int y) {
+    public Vector(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -31,25 +31,25 @@ public class Vector {
         this.y = 0;
     }
 
-    public Vector set(int x, int y) {
+    public Vector set(double x, double y) {
         this.x = x;
         this.y = y;
         return this;
     }
 
-    public Vector add(int x, int y) {
+    public Vector add(double x, double y) {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    public Vector remove(int x, int y) {
+    public Vector remove(double x, double y) {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    public Vector multiply(int m) {
+    public Vector multiply(double m) {
         this.x *= m;
         this.y *= m;
         return this;

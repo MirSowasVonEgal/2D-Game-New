@@ -33,7 +33,6 @@ public class World {
     public void createWorld() {
         blocks.add(new Block(Material.WALL, new Location(0, 0)));
         blocks.add(new Block(Material.WALL, new Location(1, 0)));
-        players.add(new Player(Skin.DEFAULT, new Location(8, 6)));
     }
 
 }
