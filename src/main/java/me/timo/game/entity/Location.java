@@ -1,6 +1,9 @@
 package me.timo.game.entity;
 
-public class Location implements Cloneable {
+import java.io.Serializable;
+
+public class Location implements Cloneable, Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public double getX() {
         return x;
@@ -73,5 +76,9 @@ public class Location implements Cloneable {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String toString() {
+        return "X: " + x + " | Y: " + y;
     }
 }

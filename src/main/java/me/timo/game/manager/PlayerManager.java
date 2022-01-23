@@ -61,58 +61,60 @@ public class PlayerManager {
     public PlayerManager(Player player, World world) {
         this.world = world;
         this.player = player;
-        world.getPlayers().add(player);
 
         colliderY = new Sprite();
-        colliderY.setSize(player.getSprite().getHeight()-2, 3);
+        colliderY.setName("COLLIDER");
+        colliderY.setSize(player.getSprite().getWidth()-2, 3);
         colliderY.getLocation().set(player.getLocation().getX(), player.getLocation().getY());
 
         colliderX = new Sprite();
+        colliderX.setName("COLLIDER");
         colliderX.setSize(3, player.getSprite().getHeight()-2);
         colliderX.getLocation().set(player.getLocation().getX(), player.getLocation().getY());
     }
 
-    public void handleMovement() {
+    public void handleMovement(GraphicsContext context) {
         Vector velocity = new Vector();
         if(getInputs().contains("W")) {
             velocity.setY(Settings.playerSpeed);
-            colliderY.setName("TOP");
+            colliderY.setData("TOP");
             colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()-3);
             getWorld().getSprites().add(colliderY);
         }
         if(getInputs().contains("A")) {
             velocity.setX(Settings.playerSpeed);
-            colliderX.setName("LEFT");
+            colliderX.setData("LEFT");
             colliderX.getLocation().set(player.getLocation().getX()-3, player.getLocation().getY()+1);
             getWorld().getSprites().add(colliderX);
         }
         if(getInputs().contains("S")) {
             velocity.setY(-Settings.playerSpeed);
-            colliderY.setName("BOTTOM");
+            colliderY.setData("BOTTOM");
             colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()+player.getSprite().getHeight());
             getWorld().getSprites().add(colliderY);
         }
         if(getInputs().contains("D")) {
             velocity.setX(-Settings.playerSpeed);
-            colliderX.setName("RIGHT");
+            colliderX.setData("RIGHT");
             colliderX.getLocation().set(player.getLocation().getX()+player.getSprite().getWidth(), player.getLocation().getY()+1);
             getWorld().getSprites().add(colliderX);
         }
 
         velocity.multiply(1/60.0);
 
+        double canvasHeight = context.getCanvas().getHeight();
+        double canvasWidth = context.getCanvas().getWidth();
+
         getWorld().getBlocks().forEach(block -> {
             if(block.getSprite().isSolid()) {
                 if(block.getSprite().isTouching(colliderY)) {
                     double height = block.getLocation().getY();
-                    if (velocity.getY() > 0 && colliderY.getName().equals("TOP")) {
+                    if (velocity.getY() > 0 && colliderY.getData().equals("TOP")) {
                         velocity.setY(0);
-                        height = ((Settings.height * 32.0) -
-                                (player.getSprite().getHeight() / 2) - block.getSprite().getHeight());
-                    } else if (velocity.getY() < 0 && colliderY.getName().equals("BOTTOM")) {
+                        height = ((canvasHeight - getPlayer().getSprite().getHeight()) / 2) - block.getSprite().getHeight();
+                    } else if (velocity.getY() < 0 && colliderY.getData().equals("BOTTOM")) {
                         velocity.setY(0);
-                        height = ((Settings.height * 32.0) -
-                                (player.getSprite().getHeight() / 2) - block.getSprite().getHeight()) + 128;
+                        height = ((canvasHeight + getPlayer().getSprite().getHeight()) / 2);
                     }
                     double rate = -(block.getLocation().getY() - height);
                     block.getLocation().setY(height);
@@ -124,14 +126,12 @@ public class PlayerManager {
                 }
                 if(block.getSprite().isTouching(colliderX)) {
                     double width = block.getLocation().getX();
-                    if (velocity.getX() > 0 && colliderX.getName().equals("LEFT")) {
+                    if (velocity.getX() > 0 && colliderX.getData().equals("LEFT")) {
                         velocity.setX(0);
-                        width = ((Settings.width * 32.0) -
-                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth());
-                    } else if (velocity.getX() < 0 && colliderX.getName().equals("RIGHT")) {
+                        width = ((canvasWidth - getPlayer().getSprite().getWidth()) / 2) - block.getSprite().getWidth();
+                    } else if (velocity.getX() < 0 && colliderX.getData().equals("RIGHT")) {
                         velocity.setX(0);
-                        width = ((Settings.width * 32.0) -
-                                (player.getSprite().getWidth() / 2) - block.getSprite().getWidth() + 128);
+                        width = ((canvasWidth + getPlayer().getSprite().getWidth()) / 2);
                     }
                     double rate = -(block.getLocation().getX() - width);
                     block.getLocation().setX(width);
@@ -150,6 +150,17 @@ public class PlayerManager {
         });
     }
 
+    public void handleInteractions(String key) {
+        if(key.equals("SPACE")) {
+            getWorld().getBlocks().forEach(block -> {
+                if((block.getSprite().isTouching(colliderY) || block.getSprite().isTouching(colliderX))
+                        && block.getBrokenState() != -1) {
+                    System.out.println("Breaking");
+                }
+            });
+        }
+    }
+
     public void refreshInputs(Scene scene) {
         scene.setOnKeyPressed((KeyEvent event) -> {
             String key = event.getCode().toString();
@@ -160,6 +171,7 @@ public class PlayerManager {
         scene.setOnKeyReleased((KeyEvent event) -> {
             String key = event.getCode().toString();
             inputs.remove(key);
+            handleInteractions(key);
         });
     }
 

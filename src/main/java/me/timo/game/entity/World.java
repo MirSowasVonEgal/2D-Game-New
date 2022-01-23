@@ -7,10 +7,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class World {
+public class World implements Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public ArrayList<Block> blocks = new ArrayList<>();
-    public ArrayList<Player> players = new ArrayList<>();
     public ArrayList<Sprite> sprites = new ArrayList<>();
 
     public ArrayList<Sprite> getSprites() {
@@ -29,14 +29,6 @@ public class World {
         this.blocks = blocks;
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
     public World() {
 
     }
@@ -48,7 +40,7 @@ public class World {
         }
     }
 
-    public void loadWorld(String name) {
+    public void loadPreset(String name) {
         try (BufferedReader br = new BufferedReader(new FileReader(Objects.requireNonNull(getClass().
                 getClassLoader().getResource("maps/"+name)).getFile()))) {
             String line;

@@ -1,6 +1,9 @@
 package me.timo.game.entity;
 
-public class Vector {
+import java.io.Serializable;
+
+public class Vector implements Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public double getX() {
         return x;

@@ -3,10 +3,22 @@ package me.timo.game.entity;
 import javafx.scene.canvas.GraphicsContext;
 import me.timo.game.enums.Material;
 
-public class Block {
+import java.io.Serializable;
+
+public class Block implements Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public Material material;
     public Location location;
+    public int brokenState = -1;
+
+    public int getBrokenState() {
+        return brokenState;
+    }
+
+    public void setBrokenState(int brokenState) {
+        this.brokenState = brokenState;
+    }
 
     public Sprite getSprite() {
         return sprite;
@@ -44,9 +56,9 @@ public class Block {
 
         Sprite sprite = new Sprite();
         sprite.setLocation(location.multiply(64));
-        sprite.setImage(material.getTexture());
-        sprite.setSolid(material.isSolid());
-        sprite.setName(material.name());
+        sprite.setMaterial(material);
+        if(material.getDefaultBrokenState() != 0)
+            brokenState = material.getDefaultBrokenState();
         this.sprite = sprite;
     }
 

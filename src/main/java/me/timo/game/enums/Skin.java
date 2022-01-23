@@ -1,12 +1,16 @@
 package me.timo.game.enums;
 
-public enum Skin {
+import javafx.scene.image.Image;
+import me.timo.game.manager.ImageManager;
 
-    DEFAULT(1, "textures/player.png", true);
+import java.io.Serializable;
+
+public enum Skin implements Serializable {
+
+    DEFAULT(1, "textures/player.png");
 
     public int id;
     public String texture;
-    public boolean isSolid;
 
     public int getId() {
         return id;
@@ -24,18 +28,16 @@ public enum Skin {
         this.texture = texture;
     }
 
-    public boolean isSolid() {
-        return isSolid;
+    public Image getImage() {
+        if(ImageManager.getImage(name()) == null)
+            return null;
+        return ImageManager.getImage(name());
     }
 
-    public void setSolid(boolean solid) {
-        isSolid = solid;
-    }
-
-    Skin(int id, String texture, boolean isSolid) {
+    Skin(int id, String texture) {
         this.id = id;
         this.texture = texture;
-        this.isSolid = isSolid;
+        ImageManager.loadImage(name(), texture);
     }
 
 }

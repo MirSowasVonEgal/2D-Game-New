@@ -4,7 +4,10 @@ import javafx.scene.canvas.GraphicsContext;
 import me.timo.game.enums.Material;
 import me.timo.game.enums.Skin;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public Skin skin;
     public Location location;
@@ -33,17 +36,14 @@ public class Player {
 
     public void setLocation(Location location) {
         this.location = location;
+        this.sprite.setLocation(location);
     }
 
-    public Player(Skin skin, Location location) {
+    public Player(Skin skin) {
         setSkin(skin);
-        setLocation(location);
 
         Sprite sprite = new Sprite();
-        sprite.setLocation(location.multiply(64));
-        sprite.setImage(skin.getTexture());
-        sprite.setSolid(skin.isSolid());
-        sprite.setName(skin.name());
+        sprite.setSkin(skin);
         setSprite(sprite);
     }
 

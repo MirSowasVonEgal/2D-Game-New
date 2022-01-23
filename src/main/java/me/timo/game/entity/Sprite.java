@@ -3,16 +3,57 @@ package me.timo.game.entity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import me.timo.game.enums.Material;
+import me.timo.game.enums.Skin;
 
-public class Sprite implements Cloneable {
+import java.io.Serializable;
+
+public class Sprite implements Cloneable, Serializable {
+    private static final long serialVersionUID = 4437609933026331261L;
 
     public Location location = new Location();
-    public Image image;
+    public Material material;
+    public Skin skin;
     public String type = "";
     public String name = "";
-    public Color color = Color.TRANSPARENT;
+    public String data = "";
+    public String color = Color.TRANSPARENT.toString();
     public double width = 1;
     public double height = 1;
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public void setMaterial(Material material) {
+        if(material.getImage() != null) {
+            setSize(material.getImage().getWidth(), material.getImage().getHeight());
+        }
+        setName(material.name());
+        setSolid(material.isSolid());
+        this.material = material;
+    }
+
+    public void setSkin(Skin skin) {
+        if(skin.getImage() != null) {
+            setSize(skin.getImage().getWidth(), skin.getImage().getHeight());
+        }
+        setName(skin.name());
+        setSolid(true);
+        this.skin = skin;
+    }
 
     public boolean isSolid() {
         return isSolid;
@@ -32,14 +73,6 @@ public class Sprite implements Cloneable {
         this.location = location;
     }
 
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
     public String getType() {
         return type;
     }
@@ -57,11 +90,11 @@ public class Sprite implements Cloneable {
     }
 
     public Color getColor() {
-        return color;
+        return Color.web(color);
     }
 
     public void setColor(Color color) {
-        this.color = color;
+        this.color = color.toString();
     }
 
     public double getWidth() {
@@ -96,17 +129,14 @@ public class Sprite implements Cloneable {
         setHeight(height);
     }
 
-    public void setImage(String file) {
-        setImage(new Image(file));
-        setSize(getImage().getWidth(), getImage().getHeight());
-    }
-
     public void render(GraphicsContext context) {
-        if(getImage() != null) {
-            context.drawImage(getImage(), getLocation().getX(), getLocation().getY());
-        } else {
+        if(material == null && skin == null) {
             context.setFill(getColor());
             context.fillRect(getLocation().getX(), getLocation().getY(), getWidth(), getHeight());
+        } else if(material != null) {
+            context.drawImage(material.getImage(), getLocation().getX(), getLocation().getY());
+        } else {
+            context.drawImage(skin.getImage(), getLocation().getX(), getLocation().getY());
         }
     }
 
