@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import me.timo.game.entity.*;
 import me.timo.game.enums.Skin;
+import me.timo.game.manager.ImageManager;
 import me.timo.game.manager.PlayerManager;
 import me.timo.game.manager.SaveManager;
 import me.timo.game.utils.Settings;
@@ -57,6 +59,8 @@ public class GameScreen extends Application {
         onResize(primaryStage, context, playerManager);
         onClose(primaryStage, playerManager, saveManager);
 
+
+        primaryStage.getIcons().add(ImageManager.getImage("DEFAULT"));
         primaryStage.show();
     }
 
