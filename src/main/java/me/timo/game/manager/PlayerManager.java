@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import me.timo.game.entity.*;
+import me.timo.game.enums.Additional;
+import me.timo.game.enums.Material;
 import me.timo.game.enums.Skin;
 import me.timo.game.utils.Settings;
 
@@ -76,25 +78,25 @@ public class PlayerManager {
     public void handleMovement(GraphicsContext context) {
         Vector velocity = new Vector();
         if(getInputs().contains("W")) {
-            velocity.setY(Settings.playerSpeed);
+            velocity.addY(Settings.playerSpeed);
             colliderY.setData("TOP");
             colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()-3);
             getWorld().getSprites().add(colliderY);
         }
         if(getInputs().contains("A")) {
-            velocity.setX(Settings.playerSpeed);
+            velocity.addX(Settings.playerSpeed);
             colliderX.setData("LEFT");
             colliderX.getLocation().set(player.getLocation().getX()-3, player.getLocation().getY()+1);
             getWorld().getSprites().add(colliderX);
         }
         if(getInputs().contains("S")) {
-            velocity.setY(-Settings.playerSpeed);
+            velocity.addY(-Settings.playerSpeed);
             colliderY.setData("BOTTOM");
             colliderY.getLocation().set(player.getLocation().getX()+1, player.getLocation().getY()+player.getSprite().getHeight());
             getWorld().getSprites().add(colliderY);
         }
         if(getInputs().contains("D")) {
-            velocity.setX(-Settings.playerSpeed);
+            velocity.addX(-Settings.playerSpeed);
             colliderX.setData("RIGHT");
             colliderX.getLocation().set(player.getLocation().getX()+player.getSprite().getWidth(), player.getLocation().getY()+1);
             getWorld().getSprites().add(colliderX);
@@ -152,12 +154,46 @@ public class PlayerManager {
 
     public void handleInteractions(String key) {
         if(key.equals("SPACE")) {
-            getWorld().getBlocks().forEach(block -> {
-                if((block.getSprite().isTouching(colliderY) || block.getSprite().isTouching(colliderX))
-                        && block.getBrokenState() != -1) {
-                    System.out.println("Breaking");
+            Block block = getWorld().getBlocks().stream().filter(current ->
+                            (current.getSprite().isTouching(colliderY) || current.getSprite().isTouching(colliderX))
+                            && current.getBrokenState() != -1).findFirst().orElse(null);
+            if(block == null)
+                return;
+
+            double state = Double.parseDouble(block.getBrokenState() +"") / block.getMaterial().getDefaultBrokenState();
+
+            if(state > 2/3.0) {
+                block.getSprite().setAdditional(Additional.BREAK_1);
+            } else if(state > 1/3.0) {
+                block.getSprite().setAdditional(Additional.BREAK_2);
+            } else if(state > 0) {
+                block.getSprite().setAdditional(Additional.BREAK_3);
+            } else {
+                block.getSprite().setAdditional(null);
+                Material material = block.getMaterial();
+                if(block.getMaterial().toString().equals("STONE")) {
+                    block.setMaterial(Material.ROCK);
+                } else {
+                    block.setMaterial(Material.STONE);
                 }
-            });
+                if(block.getData() == null)
+                    block.setData(material);
+                new Thread(() -> {
+                    try {
+                        if(block.getData() != null && block.getData() instanceof Material) {
+                            Material data = (Material) block.getData();
+                            Thread.sleep(Double.valueOf(data.getDuration() * 1000).longValue());
+                            block.getSprite().setAdditional(null);
+                            block.setMaterial(data);
+                            block.setData(null);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                return;
+            }
+            block.setBrokenState(block.getBrokenState()-1);
         }
     }
 

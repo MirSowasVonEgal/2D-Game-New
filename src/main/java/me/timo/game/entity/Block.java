@@ -11,6 +11,16 @@ public class Block implements Serializable {
     public Material material;
     public Location location;
     public int brokenState = -1;
+    public Sprite sprite;
+    public Object data;
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
 
     public int getBrokenState() {
         return brokenState;
@@ -28,14 +38,14 @@ public class Block implements Serializable {
         this.sprite = sprite;
     }
 
-    public Sprite sprite;
-
     public Material getMaterial() {
         return material;
     }
 
     public void setMaterial(Material material) {
         this.material = material;
+        getSprite().setMaterial(material);
+        setBrokenState(material.getDefaultBrokenState());
     }
 
     public Location getLocation() {

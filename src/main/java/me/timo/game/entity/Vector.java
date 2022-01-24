@@ -46,6 +46,16 @@ public class Vector implements Serializable {
         return this;
     }
 
+    public Vector addY(double y) {
+        this.y += y;
+        return this;
+    }
+
+    public Vector addX(double x) {
+        this.x += x;
+        return this;
+    }
+
     public Vector remove(double x, double y) {
         this.x -= x;
         this.y -= y;
@@ -60,5 +70,9 @@ public class Vector implements Serializable {
 
     public Vector get() {
         return this;
+    }
+
+    public String toString() {
+        return "X: " + x + " | Y: " + y;
     }
 }

@@ -12,12 +12,24 @@ public enum Material implements Serializable {
     ROCK(1, "textures/wall.png", true),
     TILE(2, "textures/tile.png", true),
     COBBLESTONE(3, "textures/cobblestone.png", true),
-    COAL(4, "textures/cobblestone.png", true, 5);
+    STONE(4, "textures/materials/ores/STONE.png", true, 3, 5),
+    COAL(5, "textures/materials/ores/COAL_ORE.png", true, 6, 15),
+    STONE_ITEM(104, "textures/items/ores/STONE.png", false),
+    COAL_ITEM(105, "textures/items/ores/COAL_ORE.png", false);
 
     public int id;
     public String texture;
     public boolean isSolid;
     public int defaultBrokenState;
+    public double duration;
+
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
 
     public int getDefaultBrokenState() {
         return defaultBrokenState;
@@ -61,14 +73,16 @@ public enum Material implements Serializable {
         this.id = id;
         this.texture = texture;
         this.isSolid = isSolid;
+        this.defaultBrokenState = -1;
         ImageManager.loadImage(name(), texture);
     }
 
-    Material(int id, String texture, boolean isSolid, int defaultBrokenState) {
+    Material(int id, String texture, boolean isSolid, int defaultBrokenState, double duration) {
         this.id = id;
         this.texture = texture;
         this.isSolid = isSolid;
         this.defaultBrokenState = defaultBrokenState;
+        this.duration = duration;
         ImageManager.loadImage(name(), texture);
     }
 

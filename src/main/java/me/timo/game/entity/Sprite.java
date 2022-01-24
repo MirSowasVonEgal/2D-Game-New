@@ -1,25 +1,35 @@
 package me.timo.game.entity;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import me.timo.game.enums.Additional;
 import me.timo.game.enums.Material;
 import me.timo.game.enums.Skin;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Sprite implements Cloneable, Serializable {
     private static final long serialVersionUID = 4437609933026331261L;
 
     public Location location = new Location();
     public Material material;
+    public Additional additional;
     public Skin skin;
     public String type = "";
     public String name = "";
     public String data = "";
     public String color = Color.TRANSPARENT.toString();
-    public double width = 1;
-    public double height = 1;
+    public double width;
+    public double height;
+
+    public Additional getAdditional() {
+        return additional;
+    }
+
+    public void setAdditional(Additional additional) {
+        this.additional = additional;
+    }
 
     public String getData() {
         return data;
@@ -134,9 +144,24 @@ public class Sprite implements Cloneable, Serializable {
             context.setFill(getColor());
             context.fillRect(getLocation().getX(), getLocation().getY(), getWidth(), getHeight());
         } else if(material != null) {
-            context.drawImage(material.getImage(), getLocation().getX(), getLocation().getY());
+            if(width == 0)
+                width = material.getImage().getWidth();
+            if(height == 0)
+                height = material.getImage().getHeight();
+            context.drawImage(material.getImage(), getLocation().getX(), getLocation().getY(), getWidth(), getHeight());
         } else {
-            context.drawImage(skin.getImage(), getLocation().getX(), getLocation().getY());
+            if(width == 0)
+                width = skin.getImage().getWidth();
+            if(height == 0)
+                height = skin.getImage().getHeight();
+            context.drawImage(skin.getImage(), getLocation().getX(), getLocation().getY(), getWidth(), getHeight());
+        }
+        if(additional != null) {
+            if (width == 0)
+                width = additional.getImage().getWidth();
+            if (height == 0)
+                height = additional.getImage().getHeight();
+            context.drawImage(additional.getImage(), getLocation().getX(), getLocation().getY(), getWidth(), getHeight());
         }
     }
 
