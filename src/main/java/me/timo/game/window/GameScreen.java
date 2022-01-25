@@ -1,25 +1,46 @@
 package me.timo.game.window;
 
-import com.google.gson.Gson;
+import com.sun.javafx.geom.BaseBounds;
+import com.sun.javafx.geom.transform.BaseTransform;
+import com.sun.javafx.jmx.MXNodeAlgorithm;
+import com.sun.javafx.jmx.MXNodeAlgorithmContext;
+import com.sun.javafx.sg.prism.NGNode;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 import me.timo.game.entity.*;
 import me.timo.game.enums.Material;
 import me.timo.game.enums.Skin;
 import me.timo.game.manager.ImageManager;
+import me.timo.game.manager.InventoryManager;
 import me.timo.game.manager.PlayerManager;
 import me.timo.game.manager.SaveManager;
 import me.timo.game.utils.Settings;
+
+import javax.naming.Context;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class GameScreen extends Application {
 
@@ -72,26 +93,20 @@ public class GameScreen extends Application {
             saveManager.save(world);
         }
 
+        InventoryManager inventoryManager = new InventoryManager(root);
+
         PlayerManager playerManager = new PlayerManager(player, world);
-        playerManager.refreshInputs(mainScene);
+        playerManager.refreshInputs(mainScene, inventoryManager);
 
-        startGameLoop(playerManager, context, root);
-        onResize(primaryStage, context, playerManager);
+        startGameLoop(playerManager, context, inventoryManager);
+        onResize(primaryStage, context, playerManager, inventoryManager);
         onClose(primaryStage, playerManager, saveManager);
-
-        root.getChildren().add(inventory);
-        canvas1 = new Canvas(width, height);
-        inventory.getChildren().add(canvas1);
-
 
         primaryStage.getIcons().add(ImageManager.getImage("DEFAULT"));
         primaryStage.show();
     }
 
-    Pane inventory = new Pane();
-    Canvas canvas1;
-
-    public void startGameLoop(PlayerManager playerManager, GraphicsContext context, Pane pane) {
+    public void startGameLoop(PlayerManager playerManager, GraphicsContext context, InventoryManager inventoryManager) {
 
         new AnimationTimer() {
             @Override
@@ -124,8 +139,25 @@ public class GameScreen extends Application {
                 });
 
                 playerManager.handleMovement(context);
+                inventoryManager.updateInventory();
             }
         }.start();
+    }
+
+    public void resize(double width, double height, PlayerManager playerManager, InventoryManager inventoryManager, GraphicsContext context) {
+        World world = playerManager.getWorld();
+        Player player = playerManager.getPlayer();
+        Location location = player.getLocation().clone();
+        context.getCanvas().setWidth(width);
+        context.getCanvas().setHeight(height);
+        context.setFill(Color.SKYBLUE);
+        context.fillRect(0,0, width, height);
+        player.setLocation(new Location(((width - player.getSprite().getWidth()) / 2),
+                ((height - player.getSprite().getHeight()) / 2)));
+        world.getBlocks().forEach(block -> {
+            block.getLocation().add(new Vector( player.getLocation().getX() - location.getX(), 0));
+        });
+        inventoryManager.resizeInventory(width, height);
     }
 
     public void onClose(Stage stage, PlayerManager playerManager, SaveManager saveManager) {
@@ -140,61 +172,17 @@ public class GameScreen extends Application {
         });
     }
 
-    public void onResize(Stage stage, GraphicsContext context, PlayerManager playerManager) {
+    public void onResize(Stage stage, GraphicsContext context, PlayerManager playerManager, InventoryManager inventoryManager) {
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
             double width = newValue.doubleValue();
             double height = context.getCanvas().getHeight();
-
-            World world = playerManager.getWorld();
-            Player player = playerManager.getPlayer();
-            Location location = player.getLocation().clone();
-            context.getCanvas().setWidth(width);
-            context.setFill(Color.SKYBLUE);
-            context.fillRect(0,0, width, height);
-            player.setLocation(new Location(((width - player.getSprite().getWidth()) / 2),
-                    ((height - player.getSprite().getHeight()) / 2)));
-            world.getBlocks().forEach(block -> {
-                block.getLocation().add(new Vector( player.getLocation().getX() - location.getX(), 0));
-            });
-
-            canvas1.setWidth(width);
-            canvas1.setHeight(width);
-            inventory.setPrefSize(width-200, height-200);
-            inventory.setLayoutX(100);
-            inventory.setLayoutY(100);
-
-            GraphicsContext context1 = canvas1.getGraphicsContext2D();
-            context1.clearRect(0, 0, width, height);
-            context1.setFill(Color.RED);
-            context1.fillRect(-10,-20, width-200, height-200);
+            resize(width, height, playerManager, inventoryManager, context);
 
         });
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double height = newValue.doubleValue();
             double width = context.getCanvas().getWidth();
-
-            World world = playerManager.getWorld();
-            Player player = playerManager.getPlayer();
-            Location location = player.getLocation().clone();
-            context.getCanvas().setHeight(height);
-            context.setFill(Color.SKYBLUE);
-            context.fillRect(0,0, width, height);
-            player.setLocation(new Location(((width - player.getSprite().getWidth()) / 2),
-                    ((height - player.getSprite().getHeight()) / 2)));
-            world.getBlocks().forEach(block -> {
-                block.getLocation().add(new Vector(0, player.getLocation().getY() - location.getY()));
-            });
-
-            canvas1.setWidth(width);
-            canvas1.setHeight(width);
-            inventory.setPrefSize(width-200, height-200);
-            inventory.setLayoutX(100);
-            inventory.setLayoutY(100);
-
-            GraphicsContext context1 = canvas1.getGraphicsContext2D();
-            context1.clearRect(0, 0, width, height);
-            context1.setFill(Color.RED);
-            context1.fillRect(-10,-20, width-200, height-200);
+            double height = newValue.doubleValue();
+            resize(width, height, playerManager, inventoryManager, context);
         });
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (KeyCode.F11.equals(event.getCode())) {

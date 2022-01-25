@@ -4,7 +4,7 @@ public class Settings {
 
     public static String title = "2D-Game";
     public static double playerSpeed = 300;
-    public static double width = 12;
-    public static double height = 8;
+    public static double width = 16;
+    public static double height = 12;
 
 }

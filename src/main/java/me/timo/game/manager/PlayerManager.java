@@ -152,7 +152,7 @@ public class PlayerManager {
         });
     }
 
-    public void handleInteractions(String key) {
+    public void handleInteractions(String key, InventoryManager inventoryManager) {
         if(key.equals("SPACE")) {
             Block block = getWorld().getBlocks().stream().filter(current ->
                             (current.getSprite().isTouching(colliderY) || current.getSprite().isTouching(colliderX))
@@ -194,10 +194,12 @@ public class PlayerManager {
                 return;
             }
             block.setBrokenState(block.getBrokenState()-1);
+        } else if(key.equals("ALT")) {
+            inventoryManager.openInventory();
         }
     }
 
-    public void refreshInputs(Scene scene) {
+    public void refreshInputs(Scene scene, InventoryManager inventoryManager) {
         scene.setOnKeyPressed((KeyEvent event) -> {
             String key = event.getCode().toString();
             if(!inputs.contains(key))
@@ -207,7 +209,7 @@ public class PlayerManager {
         scene.setOnKeyReleased((KeyEvent event) -> {
             String key = event.getCode().toString();
             inputs.remove(key);
-            handleInteractions(key);
+            handleInteractions(key, inventoryManager);
         });
     }
 
