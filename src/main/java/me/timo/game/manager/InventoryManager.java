@@ -98,11 +98,11 @@ public class InventoryManager {
         this.root = root;
 
         gridPane = new GridPane();
-        gridPane.setVgap(70);
-        gridPane.setHgap(70);
+        gridPane.setVgap(35);
+        gridPane.setHgap(10);
         gridPane.setStyle("-fx-background-image: url('textures/guis/INVENTORY_GUI.png');" +
                 "-fx-background-repeat: stretch;" +
-                "-fx-background-size: cover;"+
+                "-fx-background-size: cover;" +
                 "-fx-background-size: 100% 100%;");
 
         scrollPane = new ScrollPane();
@@ -115,10 +115,6 @@ public class InventoryManager {
         scrollPane.setContent(gridPane);
         scrollPane.setVisible(false);
 
-        for (int i = 0; i < 8; i++) {
-            items.add(new Item("DIAMOND", Material.DIAMOND_ITEM));
-        }
-
         updateInventory();
 
         root.getChildren().add(scrollPane);
@@ -128,7 +124,7 @@ public class InventoryManager {
         Optional<Item> optionalItem = getItems().stream()
                 .filter(current -> current.getMaterial().name().equals(item.getMaterial().name())).findFirst();
         optionalItem.ifPresent(value -> value.addAmount(amount));
-        if(!optionalItem.isPresent()) {
+        if (!optionalItem.isPresent()) {
             getItems().add(item);
         }
         updateInventory();
@@ -140,7 +136,7 @@ public class InventoryManager {
         int row = 0;
         items.sort(Comparator.comparing(a -> a.getMaterial().getPriority()));
         for (Item item : items) {
-            if(item.getMaterial() == null) {
+            if (item.getMaterial() == null) {
                 Rectangle rectangle = new Rectangle(itemSize, itemSize);
                 rectangle.setFill(Color.TRANSPARENT);
                 gridPane.add(rectangle, column, row);
@@ -150,8 +146,7 @@ public class InventoryManager {
                 imageView.setFitWidth(itemSize);
                 gridPane.add(imageView, column, row);
                 Text text = new Text();
-                text.setFont(new Font(itemSize / 4));
-                text.setFont(Font.font("Futura", FontWeight.BOLD, itemSize / 4));
+                text.setFont(Font.font("Futura", FontWeight.BOLD, itemSize / 8));
                 text.setText(item.getAmount() + " " + item.getName());
                 text.setTextAlignment(TextAlignment.CENTER);
                 gridPane.add(text, column, row);
@@ -159,7 +154,7 @@ public class InventoryManager {
                 GridPane.setValignment(text, VPos.BOTTOM);
                 GridPane.setHalignment(text, HPos.CENTER);
             }
-            if(column > 6) {
+            if (column > 6) {
                 column = 0;
                 row++;
             } else {
@@ -169,13 +164,13 @@ public class InventoryManager {
     }
 
     public void resizeInventory(double width, double height) {
-        gridPane.setPadding(new Insets(height / 8 - 50, width / 25, height / 4.0 - 180, width / 25));
-        scrollPane.setPrefSize(width-256, height-256);
-        isScrollbar = gridPane.getHeight() > height-256;
+        gridPane.setPadding(new Insets(height / 8.0 - 50, width / 30, height / 6.0 - 50, width / 30));
+        scrollPane.setPrefSize(width - 256, height - 256);
+        isScrollbar = gridPane.getHeight() > height - 256;
         int scrollbar = 0;
         if (isScrollbar)
             scrollbar = 10;
-        itemSize = (width - 256 - (70*9) - ((width / 25) * 2) - scrollbar) / 8;
+        itemSize = ((width - 256 - (7 * 10) - ((width / 30) * 2) - scrollbar) / 8);
         System.out.println(itemSize);
     }
 
@@ -183,5 +178,4 @@ public class InventoryManager {
         scrollPane.setVisible(!opened);
         opened = !opened;
     }
-
 }

@@ -75,7 +75,7 @@ public class GameScreen extends Application {
             });
         } else {
             world = new World();
-            world.loadPreset("Map01");
+            world.loadPreset("Map02");
             saveManager.save(world);
         }
 
@@ -89,6 +89,7 @@ public class GameScreen extends Application {
         onClose(primaryStage, playerManager, saveManager);
 
         primaryStage.getIcons().add(ImageManager.getImage("DEFAULT"));
+        primaryStage.setWidth(Settings.width*64);
         primaryStage.show();
     }
 

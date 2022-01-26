@@ -2,7 +2,9 @@ package me.timo.game.entity;
 
 import me.timo.game.enums.Material;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable {
 
     public int amount = 1;
     public int durability = -1;
