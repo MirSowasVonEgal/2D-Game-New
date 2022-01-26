@@ -176,6 +176,7 @@ public class PlayerManager {
                 } else {
                     block.setMaterial(Material.STONE);
                 }
+                inventoryManager.addItem(new Item(material.name(), Material.valueOf(material.name() + "_ITEM")), 1);
                 if(block.getData() == null)
                     block.setData(material);
                 new Thread(() -> {

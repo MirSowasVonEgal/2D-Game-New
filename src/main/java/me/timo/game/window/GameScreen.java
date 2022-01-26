@@ -14,18 +14,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 import me.timo.game.entity.*;
 import me.timo.game.enums.Material;
@@ -35,12 +27,6 @@ import me.timo.game.manager.InventoryManager;
 import me.timo.game.manager.PlayerManager;
 import me.timo.game.manager.SaveManager;
 import me.timo.game.utils.Settings;
-
-import javax.naming.Context;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 public class GameScreen extends Application {
 
@@ -71,7 +57,7 @@ public class GameScreen extends Application {
         if(saveManager.exists("World")) {
             world = (World) saveManager.load("World");
             world.getBlocks().forEach(block -> {
-                block.getLocation().add(-64*2, -64*2);
+                //block.getLocation().add(-64*2, -64*2);
                 if(block.getData() != null && block.getData() instanceof Material) {
                     block.setMaterial(Material.ROCK);
                     block.getSprite().setAdditional(null);
@@ -155,7 +141,7 @@ public class GameScreen extends Application {
         player.setLocation(new Location(((width - player.getSprite().getWidth()) / 2),
                 ((height - player.getSprite().getHeight()) / 2)));
         world.getBlocks().forEach(block -> {
-            block.getLocation().add(new Vector( player.getLocation().getX() - location.getX(), 0));
+            block.getLocation().add(new Vector( player.getLocation().getX() - location.getX(), player.getLocation().getY() - location.getY()));
         });
         inventoryManager.resizeInventory(width, height);
     }
